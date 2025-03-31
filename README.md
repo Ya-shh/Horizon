@@ -39,7 +39,7 @@ For the best experience, follow these steps in order:
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/horizon.git
+git clone https://github.com/Ya-shh/Horizon.git
 cd Horizon
 ```
 
