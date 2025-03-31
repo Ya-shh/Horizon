@@ -30,128 +30,123 @@ Before you begin, ensure you have the following installed:
 - Node.js 18+ 
 - npm or yarn
 - Git
+- Docker (for running Qdrant vector database)
 
-## Getting Started
+## Getting Started: Complete Setup Guide
 
-Follow these steps to set up the project locally:
+For the best experience, follow these steps in order:
 
 ### 1. Clone the repository
 
 ```bash
 git clone https://github.com/yourusername/horizon.git
-cd horizon
+cd Horizon
 ```
 
 ### 2. Install dependencies
 
 ```bash
 npm install
-# or
-yarn install
 ```
 
-### 3. Run the setup script
+### 3. Start Docker and launch the Qdrant container
 
-The easiest way to get started is to run our setup script, which will:
-- Create a `.env` file if it doesn't exist
-- Run database migrations
-- Seed the database with initial data
-- Check for OpenAI API key and Qdrant configuration
-- Index content if possible
+Make sure Docker is running on your system, then start the Qdrant vector database:
 
 ```bash
-npm run setup
+docker-compose up -d
 ```
 
-After running this script, you'll be ready to start the development server.
+This will start Qdrant in the background with data persistence.
 
-### 4. Start the development server
+### 4. Configure environment variables
 
-```bash
-npm run dev
-# or
-yarn dev
-```
-
-The application will be available at [http://localhost:3000](http://localhost:3000).
-
-## Manual Configuration (Alternative)
-
-If you prefer to set up manually instead of using the setup script:
-
-### 3. Configure environment variables
-
-Copy the example environment file and update it:
+Copy the example environment file:
 
 ```bash
 cp .env.example .env
 ```
 
-Edit the `.env` file and set the following values:
+The default configuration in the `.env` file should work out of the box for local development:
 
 ```
-DATABASE_URL="file:./prisma/dev.db"
-NEXTAUTH_SECRET="generate-a-strong-secret-key"
-NEXTAUTH_URL="http://localhost:3000"
+DATABASE_URL="file:/Users/yourname/path-to-project/Horizon/prisma/dev.db"
+NEXTAUTH_SECRET="your-nextauth-secret-key-here"
+NEXTAUTH_URL="http://localhost:3000" 
 
-# Optional: Add your OpenAI API key for vector search 
+# Optional: Add your OpenAI API key for semantic vector search
 # If not provided, the system will use keyword search as fallback
 OPENAI_API_KEY=""
 
-# Optional: Configure Qdrant (local or cloud)
+# Qdrant Configuration - already set for local development
 QDRANT_URL="http://localhost:6333"
 QDRANT_API_KEY=""
 ```
 
-### 4. Set up the database
+**Important:** Update the `DATABASE_URL` to include the full absolute path to your project's database file.
+
+### 5. Run the setup script
+
+Run our setup script which will handle database initialization and content preparation:
 
 ```bash
-# Run Prisma migrations
-npx prisma migrate dev
-
-# Seed the database with initial data
-npm run seed
+npm run setup
 ```
 
-## Setting Up Vector Search (Optional)
+The setup script performs the following operations:
+- Creates a `.env` file if it doesn't exist
+- Runs database migrations
+- Seeds the database with initial data
+- Checks for OpenAI API key and Qdrant configuration
+- Prepares vector collections in Qdrant
 
-For the full semantic search experience, you need to:
+### 6. Start the development server
 
-1. **Get an OpenAI API Key**: Add this to your `.env` file
-2. **Set up Qdrant**:
-   - **Option 1**: Run Qdrant using Docker Compose (recommended):
-     ```bash
-     docker-compose up -d qdrant
-     ```
-   - **Option 2**: Run Qdrant directly with Docker:
-     ```bash
-     docker run -p 6333:6333 -p 6334:6334 qdrant/qdrant
-     ```
-   - **Option 3**: Use Qdrant Cloud and add your endpoint/API key to `.env`
+```bash
+npm run dev
+```
 
-3. **Index your content**:
+The application will be available at [http://localhost:3000](http://localhost:3000).
+
+## Setting Up Vector Search (For Advanced Features)
+
+For the full semantic search experience, you need an OpenAI API key:
+
+1. Get an API key from [OpenAI](https://platform.openai.com/api-keys)
+2. Update your `.env` file with the key:
+   ```
+   OPENAI_API_KEY="your-openai-api-key"
+   ```
+3. Index your content to populate the vector database:
    ```bash
    npm run index:content
    ```
 
-> **Note**: Without an OpenAI API key, the system will automatically fall back to keyword-based search.
+Without an OpenAI API key, the system will automatically fall back to keyword-based search which still works well.
 
-## Troubleshooting
+## Troubleshooting Common Issues
 
-### Common Issues
+### Database Connection Errors
+- If you see Prisma validation errors, run:
+  ```bash
+  npx prisma format
+  npx prisma generate
+  npx prisma migrate dev
+  ```
 
-1. **Database Connection Error**:
-   - Ensure the `DATABASE_URL` in `.env` is correct
-   - Run `npx prisma db push` to ensure schema is applied
+### Docker / Qdrant Issues
+- Verify Docker is running with `docker ps`
+- Check Qdrant is running with `curl http://localhost:6333/readiness`
+- Restart the container with `docker-compose restart qdrant`
 
-2. **Search Not Working**:
-   - If using OpenAI, verify your API key is correct
-   - If using local Qdrant, check that it's running on port 6333
-   - Try running `npm run index:content` to populate the search index
+### TypeScript Files Not Running
+- If you encounter issues with TypeScript files like `Error: Unknown file extension ".ts"`:
+  ```bash
+  npm install -D typescript ts-node @types/node
+  ```
 
-3. **API Route Errors**:
-   - Check network tab in browser dev tools for specific errors
-   - Make sure all migrations have been applied with `npx prisma migrate dev`
+### Seeding Errors
+- If you see "unique constraint failed" errors during seeding, the database already has data - this is usually fine
 
 ## Project Structure
 
@@ -161,6 +156,17 @@ For the full semantic search experience, you need to:
 - `/prisma`: Database schema and migrations
 - `/public`: Static assets like images and fonts
 - `/scripts`: Helper scripts for database seeding and indexing
+
+## API Reference
+
+The platform provides several API endpoints:
+
+- `/api/search` - Vector or keyword search across all content
+- `/api/posts` - CRUD operations for discussion posts
+- `/api/comments` - Comment management
+- `/api/categories` - Content categories
+- `/api/users` - User information
+- `/api/auth/*` - Authentication (powered by NextAuth)
 
 ## Contributing
 
