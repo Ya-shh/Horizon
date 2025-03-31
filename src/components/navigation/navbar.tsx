@@ -8,7 +8,6 @@ import {
   FiHome,
   FiFolder,
   FiPlus,
-  FiSearch,
   FiMenu,
   FiX,
   FiUser,
@@ -19,6 +18,7 @@ import {
 } from "react-icons/fi";
 import Image from "next/image";
 import NotificationPanel from "../NotificationPanel";
+import SearchBar from "../ui/SearchBar";
 
 export default function Navbar() {
   const { data: session } = useSession();
@@ -72,14 +72,7 @@ export default function Navbar() {
 
           {/* Desktop user actions */}
           <div className="hidden md:flex items-center space-x-4">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search..."
-                className="py-1.5 pl-9 pr-4 rounded-full text-sm bg-white/5 border border-white/10 focus:outline-none focus:ring-1 focus:ring-primary/50 focus:border-primary/50 w-48 transition-all duration-300 text-foreground placeholder:text-muted-foreground"
-              />
-              <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-            </div>
+            <SearchBar />
 
             {session ? (
               <div className="flex items-center space-x-3">
@@ -137,13 +130,13 @@ export default function Navbar() {
               <div className="flex items-center space-x-3">
                 <Link 
                   href="/sign-in" 
-                  className="text-sm font-medium px-4 py-1.5 rounded-full text-foreground hover:text-primary transition-colors"
+                  className="text-sm font-medium px-4 py-1.5 rounded-full text-blue-500 hover:text-blue-400 hover:bg-blue-500/10 transition-colors"
                 >
                   Sign In
                 </Link>
                 <Link 
                   href="/sign-up" 
-                  className="text-sm font-medium px-4 py-1.5 rounded-full bg-primary/90 hover:bg-primary text-white transition-colors shadow-md hover:shadow-lg"
+                  className="text-sm font-medium px-4 py-1.5 rounded-full bg-blue-600 hover:bg-blue-500 text-white transition-colors shadow-md hover:shadow-lg"
                 >
                   Sign Up
                 </Link>
@@ -165,7 +158,11 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       <div className={`md:hidden ${isOpen ? "block" : "hidden"}`}>
-        <div className="px-4 pt-3 pb-5 space-y-2 bg-background/80 backdrop-blur-md border-t border-white/5">
+        <div className="px-4 pt-3 pb-5 space-y-2 bg-gray-900 border-t-2 border-gray-800">
+          <div className="mb-4 pb-3 border-b-2 border-gray-800">
+            <SearchBar />
+          </div>
+          
           <MobileNavLink href="/" active={isActive("/")} onClick={closeMenu}>
             <FiHome className="mr-3" />
             Home
@@ -234,14 +231,14 @@ export default function Navbar() {
           ) : (
             <>
               <MobileNavLink href="/sign-in" active={isActive("/sign-in")} onClick={closeMenu}>
-                <FiLogIn className="mr-3" />
-                Sign In
+                <FiLogIn className="mr-3 text-blue-500" />
+                <span className="text-blue-500">Sign In</span>
               </MobileNavLink>
               <div className="p-2">
                 <Link 
                   href="/sign-up" 
                   onClick={closeMenu}
-                  className="w-full flex items-center justify-center px-3 py-2.5 text-sm rounded-lg bg-primary/90 hover:bg-primary text-white transition-colors"
+                  className="w-full flex items-center justify-center px-3 py-2.5 text-sm rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition-colors"
                 >
                   <FiUser className="mr-2" />
                   Sign Up
@@ -285,8 +282,8 @@ const MobileNavLink = ({ href, active, children, onClick }: NavLinkProps) => {
       onClick={onClick}
       className={`flex items-center px-3 py-2.5 rounded-lg text-sm transition-colors ${
         active
-          ? "bg-primary/10 text-primary"
-          : "text-foreground/80 hover:text-primary hover:bg-white/5"
+          ? "bg-blue-500/10 text-blue-500"
+          : "text-foreground/80 hover:text-blue-500 hover:bg-white/5"
       }`}
     >
       {children}

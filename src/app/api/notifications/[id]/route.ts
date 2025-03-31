@@ -20,7 +20,9 @@ export async function PATCH(
       );
     }
     
-    const { id } = params;
+    // The correct pattern is to await the entire params object first
+    const resolvedParams = await params;
+    const id = resolvedParams.id;
     
     if (!id) {
       return NextResponse.json(
