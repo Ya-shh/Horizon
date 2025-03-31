@@ -38,7 +38,7 @@ Follow these steps to set up the project locally:
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/horizon.git
+git clone https://github.com/Ya-shh/Horizon.git
 cd horizon
 ```
 
