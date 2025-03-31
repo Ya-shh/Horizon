@@ -1,14 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { achievements } from "@/lib/achievements";
+import { achievements, calculateAchievementProgress } from "@/lib/achievements";
 
 export async function GET(
   req: NextRequest,
   { params }: { params: { username: string } }
 ) {
   try {
-    console.log("Achievement API called with username:", params.username);
-    const username = params.username;
+    // The correct pattern is to await the entire params object first
+    const resolvedParams = await params;
+    const username = resolvedParams.username;
+    console.log("Achievement API called with username:", username);
     
     // Validate username
     if (!username) {
@@ -21,7 +23,18 @@ export async function GET(
     // Find user by username
     const user = await db.user.findUnique({
       where: { username },
-      select: { id: true }
+      select: { 
+        id: true,
+        posts: { select: { id: true } },
+        comments: { select: { id: true } },
+        userAchievements: { 
+          select: { 
+            id: true,
+            achievementId: true,
+            unlockedAt: true  
+          } 
+        } 
+      }
     });
 
     if (!user) {

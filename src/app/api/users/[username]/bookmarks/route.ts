@@ -7,7 +7,10 @@ export async function GET(
   { params }: { params: { username: string } }
 ) {
   try {
-    const username = params.username;
+    // The correct pattern is to await the entire params object first
+    const resolvedParams = await params;
+    const username = resolvedParams.username;
+    
     const { searchParams } = new URL(req.url);
     const limit = parseInt(searchParams.get("limit") || "10");
     const page = parseInt(searchParams.get("page") || "1");

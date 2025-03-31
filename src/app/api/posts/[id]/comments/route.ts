@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { z } from "zod";
+import { NextRequest } from "next/server";
 
 // Schema for creating a comment
 const commentCreateSchema = z.object({
@@ -12,18 +13,19 @@ const commentCreateSchema = z.object({
 
 // GET comments for a post
 export async function GET(
-  req: Request,
+  req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
+    // The correct pattern is to await the entire params object first
+    const resolvedParams = await params;
+    const id = resolvedParams.id;
+    
     const { searchParams } = new URL(req.url);
     const limit = parseInt(searchParams.get("limit") || "50");
     const page = parseInt(searchParams.get("page") || "1");
     const skip = (page - 1) * limit;
 
-    // Safely extract ID with a fallback
-    const id = (params ?? {}).id;
-    
     if (!id) {
       return NextResponse.json(
         { message: "Post ID is required" },
@@ -88,7 +90,7 @@ export async function GET(
 
 // POST create a new comment
 export async function POST(
-  req: Request,
+  req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
@@ -101,8 +103,9 @@ export async function POST(
       );
     }
 
-    // Safely extract ID with a fallback
-    const id = (params ?? {}).id;
+    // The correct pattern is to await the entire params object first
+    const resolvedParams = await params;
+    const id = resolvedParams.id;
     
     if (!id) {
       return NextResponse.json(
