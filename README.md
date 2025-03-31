@@ -1,6 +1,6 @@
-# AI Forum - Next-Generation Community Platform
+Horizon Next-Generation Community Platform
 
-A modern, AI-enhanced forum application designed to replace traditional platforms like Reddit, Quora, and Twitter. Built with performance, scalability, and user experience in mind.
+A modern forum application , Built with performance, scalability, and user experience in mind.
 
 ## Key Features
 
