@@ -87,8 +87,6 @@ QDRANT_API_KEY=""
 
 ### 5. Run the setup script
 
-Run our setup script which will handle database initialization and content preparation:
-
 ```bash
 npm run setup
 ```
@@ -99,6 +97,14 @@ The setup script performs the following operations:
 - Seeds the database with initial data
 - Checks for OpenAI API key and Qdrant configuration
 - Prepares vector collections in Qdrant
+
+> **Note:** If you encounter Prisma validation errors during setup, you may need to run these commands manually:
+> ```bash
+> npx prisma format
+> npx prisma generate
+> npx prisma migrate dev --name init
+> npx prisma db seed
+> ```
 
 ### 6. Start the development server
 
@@ -126,13 +132,16 @@ Without an OpenAI API key, the system will automatically fall back to keyword-ba
 
 ## Troubleshooting Common Issues
 
-### Database Connection Errors
-- If you see Prisma validation errors, run:
+### Database and Prisma Issues
+- If you encounter Prisma schema validation errors during setup (e.g., missing relation fields), run these commands in sequence:
   ```bash
   npx prisma format
   npx prisma generate
-  npx prisma migrate dev
+  npx prisma migrate dev --name init
+  npx prisma db seed
   ```
+
+- If you see "unique constraint failed" errors during seeding, it means the database already has data - this is usually fine and you can proceed
 
 ### Docker / Qdrant Issues
 - Verify Docker is running with `docker ps`
@@ -144,9 +153,6 @@ Without an OpenAI API key, the system will automatically fall back to keyword-ba
   ```bash
   npm install -D typescript ts-node @types/node
   ```
-
-### Seeding Errors
-- If you see "unique constraint failed" errors during seeding, the database already has data - this is usually fine
 
 ## Project Structure
 
